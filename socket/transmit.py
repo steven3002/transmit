@@ -37,7 +37,7 @@ class HandShake:
         self.Qr_key_id = Qr_key_id
         self.means_of_transportation=means_of_transportation
         self.created_at = time.time()
-        self.possible_delay= Delay()
+        self.delay_unit= Delay()
     def add_checkpoint(self, checkpoint_position, check_point_wallet_address, check_point_address):
         # check point position shows the position of transmit is first to check the item or third before user
         self.checkpoint[checkpoint_position] = {
