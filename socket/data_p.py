@@ -1,56 +1,59 @@
 class Delay:
-    def __init__(self):
-        pass
-    def is_weather_favorable(weather_data, transportation):
-        # Extract relevant weather parameters
-        temp = weather_data["temp"]
-        humidity = weather_data["humidity"]
-        wind_gust = weather_data["windgust"]
-        wind_speed = weather_data["windspeed"]
-        wind_dir = weather_data["winddir"]
-        pressure = weather_data["pressure"]
-        cloud_cover = weather_data["cloudcover"]
-        precipitation_type = weather_data["preciptype"][0] if weather_data["preciptype"] else None
+    def __init__(self, weather_data):
+        self.temp = float(weather_data["temp"])
+        self.wind_gust = float(weather_data["windgust"])
+        self.wind_speed = float(weather_data["windspeed"])
+        self.wind_dir = float(weather_data["winddir"])
+        self.pressure = float(weather_data["pressure"])
+    def is_weather_favorable(self, transportation):
 
-        # Check conditions based on transportation method
         if transportation == "walking":
-            return (50 <= temp <= 80) and (40 <= humidity <= 60) and (wind_speed <= 10) and (cloud_cover <= 30) and (precipitation_type is None or precipitation_type == "rain")
+            favorable_temp = 65
+            favorable_wind_gust = 15
+            favorable_wind_speed = 10
+            favorable_wind_dir = 180
+            favorable_pressure = 1015
         elif transportation == "bicycle":
-            return (50 <= temp <= 80) and (40 <= humidity <= 60) and (wind_speed <= 15) and (cloud_cover <= 30) and (precipitation_type is None)
+            favorable_temp = 70
+            favorable_wind_gust = 20
+            favorable_wind_speed = 15
+            favorable_wind_dir = 180
+            favorable_pressure = 1015
         elif transportation == "car":
-            return (60 <= temp <= 75) and (30 <= humidity <= 70) and (wind_speed <= 30) and (cloud_cover <= 30) and (precipitation_type is None)
+            favorable_temp = 72
+            favorable_wind_gust = 25
+            favorable_wind_speed = 20
+            favorable_wind_dir = 180
+            favorable_pressure = 1015
         elif transportation == "drone":
-            return (50 <= temp <= 90) and (humidity <= 70) and (wind_speed <= 10) and (cloud_cover <= 30) and (precipitation_type is None)
+            favorable_temp = 75
+            favorable_wind_gust = 30
+            favorable_wind_speed = 25
+            favorable_wind_dir = 360
+            favorable_pressure = 1015
         else:
             return False  # Unsupported transportation method
 
-    # Example weather data for two days
-    weather_data_day1 = {
-        "temp": 52.6,
-        "humidity": 53.8,
-        "windgust": 24.6,
-        "windspeed": 16.8,
-        "winddir": 310,
-        "pressure": 1019.5,
-        "cloudcover": 10.5,
-        "preciptype": ["rain"]
-    }
+        # Calculate delay based on weather conditions compared to favorable conditions
+        temp_ratio = self.temp / favorable_temp
+        wind_gust_ratio = self.wind_gust / favorable_wind_gust
+        wind_speed_ratio = self.wind_speed / favorable_wind_speed
+        wind_dir_ratio = self.wind_dir / favorable_wind_dir
+        pressure_ratio = self.pressure / favorable_pressure
+        delays = [temp_ratio, wind_dir_ratio,wind_speed_ratio,wind_gust_ratio,pressure_ratio]
+        delay=0
+        for items in delays :
+            delay+=self.interpolate_delay(items)
 
-    weather_data_day2 = {
-        "temp": 57.6,
-        "humidity": 53.3,
-        "windgust": 28,
-        "windspeed": 18.6,
-        "winddir": 265.3,
-        "pressure": 1016.2,
-        "cloudcover": 12.7,
-        "preciptype": ["rain"]
-    }
+        return delay/len(delays)
 
-    # Check weather favorability for different transportation methods
-    transportation_methods = ["walking", "bicycle", "car", "drone"]
-    for transportation in transportation_methods:
-        print(f"Is weather favorable for {transportation}?")
-        print("Day 1:", is_weather_favorable(weather_data_day1, transportation))
-        print("Day 2:", is_weather_favorable(weather_data_day2, transportation))
-        print()
+    def interpolate_delay(self, length_target):
+        no_delay = 0
+        standard_ratio = 1
+        critical_delay = 87
+        critical_ratio = 1.5
+
+        return no_delay + (length_target - standard_ratio) * (critical_delay - no_delay) / (
+                    critical_ratio - standard_ratio)
+
+
