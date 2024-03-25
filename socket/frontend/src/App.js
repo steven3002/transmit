@@ -2,6 +2,8 @@ import "./App.css";
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import HandShakeForm from "./createTransmit";
+import Transmit from "./Transmit.js";
+import {BrowserRouter , Route,  Routes} from "react-router-dom";
 
 
 function App() {
@@ -35,13 +37,27 @@ function App() {
         initializeEthers();
     }, []);
 
+      const Home = () => <div className="App">Home Page</div>;
+  const TransmitForm = () => (
+    <div className="App">
+      <HandShakeForm signer={signer} provider={provider} />
+    </div>
+  );
+
     return (
-        <div className="App">
-            <HandShakeForm signer={signer} provider={provider} />
-        </div>
+        <>
+            <BrowserRouter>
+
+
+                <Routes>
+                       <Route path="/" exact  element={<Home />} />
+                <Route path="/form" element={<TransmitForm />} />
+                <Route path="/transmit" element={<Transmit />} />
+                </Routes>
+                </BrowserRouter>
+        </>
+
     );
 }
 
 export default App;
-
-// this is good
