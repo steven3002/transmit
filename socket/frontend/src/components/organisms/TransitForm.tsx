@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { DropdownField, FormField } from "./InputField.tsx";
 import { Scanner } from "@yudiel/react-qr-scanner";
 import Button from "./Button.tsx";
-import { Provider, Signer } from "ethers";
 import Overlay from "./Overlay.tsx";
 import { CloseButton } from "./CloseButton.tsx";
 
@@ -24,9 +23,6 @@ export default function TransitForm() {
 }
 
 function FormContent({ closeForm }: { closeForm: () => void }) {
-    const [signer, setSigner] = React.useState<Signer>();
-    const [provider, setProvider] = React.useState<Provider>();
-
     const [userLocation, setUserLocation] = React.useState("");
     const [adminLocation, setAdminLocation] = React.useState("");
     const [qrCode, setQrCode] = React.useState("");
@@ -38,10 +34,6 @@ function FormContent({ closeForm }: { closeForm: () => void }) {
     const [transportationMode, setTransportationMode] = React.useState("");
 
     const [showQrCode, setShowQrCode] = React.useState(false);
-
-    useEffect(() => {
-        // initializeEthers(setProvider, setSigner);
-    }, []);
 
     const toggleQrCode = () => {
         setShowQrCode(!showQrCode);
@@ -56,9 +48,7 @@ function FormContent({ closeForm }: { closeForm: () => void }) {
                 <h1 className="text-2xl font-bold">Transmit Form</h1>
                 <CloseButton close={closeForm} />
             </div>
-            <form
-                className="flex flex-col gap-4 my-4"
-            >
+            <form className="flex flex-col gap-4 my-4">
                 <FormField
                     label="User Location"
                     placeholder="38, Ogunlana Drive, Surulere, Lagos"
@@ -73,12 +63,13 @@ function FormContent({ closeForm }: { closeForm: () => void }) {
                     onChange={setAdminLocation}
                 />
 
-                {showQrCode ?
+                {showQrCode ? (
                     <QrScanner
                         onError={(error) => console.log(error?.message)}
                         onResult={setQrCode}
                         onDismiss={toggleQrCode}
-                    /> :
+                    />
+                ) : (
                     <FormField
                         label="Qr Code"
                         value={qrCode}
@@ -86,7 +77,7 @@ function FormContent({ closeForm }: { closeForm: () => void }) {
                         onClick={toggleQrCode}
                         readOnly
                     />
-                }
+                )}
 
                 <FormField
                     label="User Wallet"
@@ -108,7 +99,6 @@ function FormContent({ closeForm }: { closeForm: () => void }) {
                     value={packageNature}
                     onChange={setPackageNature}
                 />
-
 
                 <FormField
                     label="Checkpoint Location"
@@ -141,30 +131,33 @@ function FormContent({ closeForm }: { closeForm: () => void }) {
 
 function CreateTransmitButton({ onClick }: { onClick: () => void }) {
     return (
-        <Button type="submit" variant="primary" onClick={onClick} className="w-[40%]">
+        <Button
+            type="submit"
+            variant="primary"
+            onClick={onClick}
+            className="w-[40%]"
+        >
             + Create Transmit
         </Button>
     );
 }
 
-function QrScanner(
-    { onResult, onError, onDismiss }: {
-        onResult: (result: string) => void,
-        onError: (error: Error) => void,
-        onDismiss: () => void
-    }
-) {
+function QrScanner({
+    onResult,
+    onError,
+    onDismiss,
+}: {
+    onResult: (result: string) => void;
+    onError: (error: Error) => void;
+    onDismiss: () => void;
+}) {
     return (
         <div className="flex flex-col gap-2 items-end">
             <CloseButton close={onDismiss} />
-            <Scanner
-                onResult={onResult}
-                onError={onError}
-            />
+            <Scanner onResult={onResult} onError={onError} />
         </div>
     );
 }
-
 
 const TransportationModes = [
     "Bike",
@@ -176,5 +169,5 @@ const TransportationModes = [
     "Train",
     "Bus",
     "Motorcycle",
-    "Foot"
+    "Foot",
 ];
