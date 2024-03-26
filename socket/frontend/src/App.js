@@ -4,6 +4,7 @@ import { ethers } from "ethers";
 import HandShakeForm from "./createTransmit";
 import Transmit from "./Transmit.js";
 import {BrowserRouter , Route,  Routes} from "react-router-dom";
+import BackendDebugger from "./de_bug";
 
 
 function App() {
@@ -44,6 +45,11 @@ function App() {
     </div>
   );
 
+    const Debug = () => (
+    <div className="Test">
+      <BackendDebugger signer={signer} provider={provider} />
+    </div>
+  );
     return (
         <>
             <BrowserRouter>
@@ -53,6 +59,7 @@ function App() {
                        <Route path="/" exact  element={<Home />} />
                 <Route path="/form" element={<TransmitForm />} />
                 <Route path="/transmit" element={<Transmit />} />
+                    <Route path="/debug" element={<Debug/>}/>
                 </Routes>
                 </BrowserRouter>
         </>
