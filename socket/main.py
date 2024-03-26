@@ -74,7 +74,7 @@ def handle_inspect(data):
         add_report("Invalid method.")
         return "reject"
     return handler(key_id, signer)
-# {"userLocation":"new hall, unilag, nigeria","adminLocation":"redemption camp, ogun state, nigeria","qrKeyId":"2311133335","userWallet":"0xBcd4042DE499D14e55001CcbB24a551F3b954096", "package":"","packageNature":"","transportation":"walking", "check_point":[{"point_address":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "point_location":"ikeja, lagos, nigeria"}]}
+#   {"userLocation":"new hall, unilag, nigeria","adminLocation":"redemption camp, ogun state, nigeria","qrKeyId":"2311133335","userWallet":"0xBcd4042DE499D14e55001CcbB24a551F3b954096", "package":"","packageNature":"","transportation":"walking", "check_point":[{"point_address":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "point_location":"ikeja, lagos, nigeria"}]}
 
 def log_transmit(payload, signer):
     global key_value
@@ -204,22 +204,23 @@ def quick_scan(payload, signer):
 def my_keys(payload, signer):
     item = []
     try:
-        for key, value in keys.items():
-            if value["handshakes"].admin == signer:
-                item.append({key: value["handshakes"].to_dict()})
+        for key, values in keys.items():
+            add_report(values["handshakes"].admin)
+            if values["handshakes"].admin.lower() == signer.lower():
+                item.append({key: values["handshakes"].to_dict()})
         my_key_data = json.dumps({"my_keys": item})
         add_report(my_key_data)
     except KeyError as e:
-        add_report(f"Missing key in payload: {e}")
+        logger.info(f"Missing key in payload: {e}")
         return "reject"
     return "accept"
 
 
 def search(payload, signer):
-    payload_content = (payload)
-    payload_key = payload_content["key_id"]
+
     try:
-        search_find = keys[int(payload_key)]
+        search_find = keys[int(payload)]
+
         item = json.dumps({"search": search_find["handshakes"].to_dict()})
         add_report(item)
         return "accept"
@@ -233,7 +234,8 @@ def guest_key(payload, signer):
     item = []
     try:
         for key, value in keys.items():
-            if value["handshakes"].user == signer:
+            logger.info(f"{value['handshakes']}")
+            if value["handshakes"].user == signer.lower():
                 item.append({key: value})
         my_key_data = json.dumps({"my_keys": item})
         add_report(my_key_data)
@@ -265,6 +267,14 @@ inspect_data_handlers = {
 
 finish = {"status": "accept"}
 
+
+# log_transmit({"userLocation":"new hall, unilag, nigeria","adminLocation":"redemption camp, ogun state, nigeria","qrKeyId":"2311133335","userWallet":"0xBcd4042DE499D14e55001CcbB24a551F3b954096", "package":"","packageNature":"","transportation":"walking", "check_point":[{"point_address":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "point_location":"ikeja, lagos, nigeria"}]},'0x976EA74026E726554dB657fA54763abd0C3a0aa9')
+# log_transmit({"userLocation":"new hall, unilag, nigeria","adminLocation":"redemption camp, ogun state, nigeria","qrKeyId":"2311133335","userWallet":"0xBcd4042DE499D14e55001CcbB24a551F3b954096", "package":"","packageNature":"","transportation":"walking", "check_point":[{"point_address":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "point_location":"ikeja, lagos, nigeria"}]},'0x976EA74026E726554dB657fA54763abd0C3a0aa9')
+# log_transmit({"userLocation":"new hall, unilag, nigeria","adminLocation":"redemption camp, ogun state, nigeria","qrKeyId":"2311133335","userWallet":"0xBcd4042DE499D14e55001CcbB24a551F3b954096", "package":"","packageNature":"","transportation":"walking", "check_point":[{"point_address":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "point_location":"ikeja, lagos, nigeria"}]},'0x976EA74026E726554dB657fA54763abd0C3a0aa9')
+# log_transmit({"userLocation":"new hall, unilag, nigeria","adminLocation":"redemption camp, ogun state, nigeria","qrKeyId":"2311133335","userWallet":"0xBcd4042DE499D14e55001CcbB24a551F3b954096", "package":"","packageNature":"","transportation":"walking", "check_point":[{"point_address":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "point_location":"ikeja, lagos, nigeria"}]},'0x976EA74026E726554dB657fA54763abd0C3a0aa9')
+
+
+
 while True:
     logger.info("Sending finish aaaaaa")
     response = requests.post(rollup_server + "/finish", json=finish)
@@ -278,3 +288,4 @@ while True:
 
         handler = handlers[rollup_request["request_type"]]
         finish["status"] = handler(rollup_request["data"])
+
