@@ -1,59 +1,44 @@
 class Delay:
     def __init__(self, weather_data):
-        self.temp = float(weather_data["temp"])
-        self.wind_gust = float(weather_data["windgust"])
-        self.wind_speed = float(weather_data["windspeed"])
-        self.wind_dir = float(weather_data["winddir"])
-        self.pressure = float(weather_data["pressure"])
-    def is_weather_favorable(self, transportation):
+        self.weather_data = weather_data
 
-        if transportation == "walking":
-            favorable_temp = 65
-            favorable_wind_gust = 15
-            favorable_wind_speed = 10
-            favorable_wind_dir = 180
-            favorable_pressure = 1015
-        elif transportation == "bicycle":
-            favorable_temp = 70
-            favorable_wind_gust = 20
-            favorable_wind_speed = 15
-            favorable_wind_dir = 180
-            favorable_pressure = 1015
-        elif transportation == "car":
-            favorable_temp = 72
-            favorable_wind_gust = 25
-            favorable_wind_speed = 20
-            favorable_wind_dir = 180
-            favorable_pressure = 1015
-        elif transportation == "drone":
-            favorable_temp = 75
-            favorable_wind_gust = 30
-            favorable_wind_speed = 25
-            favorable_wind_dir = 360
-            favorable_pressure = 1015
-        else:
+    def is_weather_favorable(self, transportation):
+        favorable_conditions = self.get_favorable_conditions(transportation)
+        if favorable_conditions is None:
             return False  # Unsupported transportation method
 
-        # Calculate delay based on weather conditions compared to favorable conditions
-        temp_ratio = self.temp / favorable_temp
-        wind_gust_ratio = self.wind_gust / favorable_wind_gust
-        wind_speed_ratio = self.wind_speed / favorable_wind_speed
-        wind_dir_ratio = self.wind_dir / favorable_wind_dir
-        pressure_ratio = self.pressure / favorable_pressure
-        delays = [temp_ratio, wind_dir_ratio,wind_speed_ratio,wind_gust_ratio,pressure_ratio]
-        delay=0
-        for items in delays :
-            delay+=self.interpolate_delay(items)
+        delays = []
+        for condition, favorable_value in favorable_conditions.items():
+            actual_value = self.weather_data.get(condition)
+            if actual_value is None:
+                return False  # Missing weather data
+            if actual_value / favorable_value >=1:
+                ratio=actual_value / favorable_value
+            else:
+                ratio =   favorable_value/actual_value
+            delays.append(self.interpolate_delay(ratio))
 
-        return delay/len(delays)
+        average_delay = sum(delays) / len(delays)
+        return average_delay
 
-    def interpolate_delay(self, length_target):
+    @staticmethod
+    def get_favorable_conditions(transportation):
+        favorable_conditions = {
+            "walking": {"temp": 55, "windgust": 15, "windspeed": 10, "winddir": 180, "pressure": 1015},
+            "bicycle": {"temp": 70, "windgust": 20, "windspeed": 15, "winddir": 180, "pressure": 1015},
+            "car": {"temp": 72, "windgust": 25, "windspeed": 20, "winddir": 180, "pressure": 1015},
+            "drone": {"temp": 75, "windgust": 30, "windspeed": 25, "winddir": 360, "pressure": 1015},
+        }
+        return favorable_conditions.get(transportation)
+
+    @staticmethod
+    def interpolate_delay(ratio):
         no_delay = 0
         standard_ratio = 1
         critical_delay = 87
         critical_ratio = 1.5
 
-        return no_delay + (length_target - standard_ratio) * (critical_delay - no_delay) / (
+        return no_delay + (ratio - standard_ratio) * (critical_delay - no_delay) / (
                     critical_ratio - standard_ratio)
 
 
