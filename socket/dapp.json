@@ -1,0 +1,5 @@
+{
+  "fs": {
+    "files": ["main.py", "entrypoint.sh", "transmit.py","utili.py","data_p.py"]
+  }
+}

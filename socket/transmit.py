@@ -37,7 +37,7 @@ class HandShake:
         self.Qr_key_id = Qr_key_id
         self.means_of_transportation=means_of_transportation
         self.created_at = time.time()
-        self.possible_delay= Delay()
+        # self.delay_unit= Delay()
     def add_checkpoint(self, checkpoint_position, check_point_wallet_address, check_point_address):
         # check point position shows the position of transmit is first to check the item or third before user
         self.checkpoint[checkpoint_position] = {
@@ -61,6 +61,7 @@ class HandShake:
             return "An error has occurred"
 
     def gotten_to_point(self, wallet_address, Qr_confirmation, point_id=0):
+
         if point_id == 0:
             if wallet_address == self.user:
                 self.user_gotten_package = self.Qr_confirmation(Qr_confirmation)
@@ -69,7 +70,7 @@ class HandShake:
             else:
                 return " invalid parameters presented 11"
         else:
-            if wallet_address == self.checkpoint["point_address"]:
+            if wallet_address == self.checkpoint[point_id]["point_address"]:
                 self.checkpoint[point_id]["point_confirmation"] = self.Qr_confirmation(Qr_confirmation)
                 self.checkpoint[point_id]["receiving_time"] = time.time()
                 return "confirmation"
@@ -89,3 +90,6 @@ class HandShake:
             'Qr_key_id': self.Qr_key_id,
             'created_at': self.created_at
         }
+
+    # def esay_scan(self, Qr_id, signer):
+    #     # this is for easy scanning of the item:
