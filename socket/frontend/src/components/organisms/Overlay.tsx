@@ -1,26 +1,21 @@
-import {createPortal} from "react-dom";
+import { createPortal } from "react-dom";
 import Modal from "./Modal";
 import React from "react";
 
-const mountElement = document.getElementById("overlays");
+const mountElement = document.getElementById("overlay");
 
-type Props = {
-    children: React.ReactNode;
-    isOpen: boolean;
-};
-
-const Overlays = (props: Props) => {
+export default function Overlay({ isOpen, children }: OverlayProps) {
     return createPortal(
         <div
             className={`${
-                props.isOpen
+                isOpen
                     ? "fixed inset-0 z-50 flex items-center justify-center bg-[#000] bg-opacity-40"
                     : ""
             }`}
         >
-            {props.isOpen && (
+            {isOpen && (
                 <div>
-                    <Modal>{props.children}</Modal>
+                    <Modal>{children}</Modal>
                 </div>
             )}
         </div>,
@@ -28,4 +23,7 @@ const Overlays = (props: Props) => {
     );
 };
 
-export default Overlays;
+type OverlayProps = {
+    children: React.ReactNode;
+    isOpen: boolean;
+};

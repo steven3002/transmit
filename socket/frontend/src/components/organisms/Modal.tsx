@@ -1,15 +1,15 @@
-type Props = {
-    children: React.ReactNode;
-};
+import React from "react";
 
-const Modal = (props: Props) => {
+export default function Modal({ children }: ModalProps) {
     return (
         <div className="modal">
             <div className="modal-content">
-                <div className="modal-body">{props.children}</div>
+                <div className="modal-body">{children}</div>
             </div>
         </div>
     );
 };
 
-export default Modal;
+type ModalProps = {
+    children: React.ReactNode;
+};

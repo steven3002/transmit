@@ -1,11 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
+
+export function SearchField({ className }: { className?: string }) {
+    const [value, setValue] = useState("");
+
+    return (
+        <InputField
+            className={className}
+            id="search"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            placeholder="Search"
+            type="text"
+        />
+    );
+
+}
 
 export function DropdownField(
     {
         label,
         options,
         value,
-        onChange,
+        onChange
     }: DropdownFieldProps
 ) {
     const id = label.toLowerCase().replace(" ", "-");
@@ -51,7 +67,7 @@ export default function InputField(props: InputProps) {
     return (
         <input
             {...props}
-            className={inputStyle}
+            className={`${inputStyle} ${props.className}`}
             value={props.value}
             id={props.id}
             name={props.id}
@@ -75,4 +91,4 @@ type DropdownFieldProps = Omit<FormFieldProps, "type"> & {
     options: string[]
 };
 
-const inputStyle = "border border-neutral-50 rounded-md w-full outline-none px-4 py-3 text-base font-normal text-neutral-300 focus:outline-none focus:border focus:border-purple-400"
+const inputStyle = "border border-neutral-50 rounded-md w-full outline-none px-4 py-3 text-base font-normal text-neutral-300 focus:outline-none focus:border focus:border-purple-400";

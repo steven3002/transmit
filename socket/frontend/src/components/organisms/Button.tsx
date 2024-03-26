@@ -6,7 +6,6 @@ type CustomButtonType = "button" | "submit" | "reset" | undefined;
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant: CustomButtonVariant;
     children: React.ReactNode;
-    styleHolder?: string;
     type?: CustomButtonType;
     disabled?: boolean | undefined;
 }
@@ -17,8 +16,8 @@ const Button: React.FC<ButtonProps> = (
         type,
         children,
         onClick,
-        styleHolder,
         disabled,
+        className,
         ...props
     }
 ) => {
@@ -33,7 +32,7 @@ const Button: React.FC<ButtonProps> = (
                         ? "bg-[#fbfbfc] border border-solid border-[#dfe1e6]  hover:bg-purple-400 hover:border-purple-50 hover:text-neutral-0"
                         : ""
     }  
-    ${styleHolder}
+    ${className}
     ${disabled && "opacity-50 cursor-not-allowed"}
   `;
 

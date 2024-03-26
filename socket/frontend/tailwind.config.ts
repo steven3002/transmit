@@ -81,6 +81,7 @@ const tailwindConfig: import("tailwindcss").Config = {
                 h: "1.56rem",
             },
             width: {
+                mh: "90%",
                 h: "71%",
                 sh: "35%",
             },
